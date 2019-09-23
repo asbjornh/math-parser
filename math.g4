@@ -1,7 +1,7 @@
 grammar math;
 start: expr | EOF;
-expr: term | expr add term | expr subtract term;
-term: number | term multiply number | term divide number;
+expr: term | expr (add | subtract) term;
+term: number | term (multiply | divide) number;
 number: innerNumber | innerNumber exponent innerNumber;
 
 innerNumber: INT | FLOAT;
