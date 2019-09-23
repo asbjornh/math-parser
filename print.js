@@ -10,6 +10,10 @@ class Visitor extends MathVisitor {
       : "";
   }
 
+  visitTerminal(ctx) {
+    return ctx.getText();
+  }
+
   visitNumber(ctx) {
     return ctx.getText();
   }
@@ -18,20 +22,14 @@ class Visitor extends MathVisitor {
     return ctx.getText();
   }
 
-  visitParenthesizedExpr(ctx) {
-    return "(" + this.visitChildren(ctx).join(" ") + ")";
-  }
-
-  visitPresedenceExpr(ctx) {
-    return "(" + this.visitChildren(ctx).join(" ") + ")";
-  }
-
-  visitPresedenceOperator(ctx) {
-    return ctx.getText();
+  visitTerm(ctx) {
+    const children = this.visitChildren(ctx).join(" ");
+    return ctx.divide() || ctx.multiply() ? "(" + children + ")" : children;
   }
 
   visitExpr(ctx) {
-    return "(" + this.visitChildren(ctx).join(" ") + ")";
+    const children = this.visitChildren(ctx).join(" ");
+    return ctx.add() || ctx.subtract() ? "(" + children + ")" : children;
   }
 }
 
