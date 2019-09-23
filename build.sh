@@ -1,0 +1,1 @@
+antlr math.g4 -Dlanguage=JavaScript -o lib -visitor
