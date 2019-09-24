@@ -7,17 +7,21 @@ class Visitor extends MathVisitor {
   }
 
   visitExpr(ctx) {
+    const operator = ctx.add() || ctx.subtract();
     const children = this.visitChildren(ctx).join(" ");
-    return ctx.add() || ctx.subtract() ? "(" + children + ")" : children;
+    return operator ? "(" + children + ")" : children;
   }
 
   visitTerm(ctx) {
+    const operator = ctx.divide() || ctx.multiply();
     const children = this.visitChildren(ctx).join(" ");
-    return ctx.divide() || ctx.multiply() ? "(" + children + ")" : children;
+    return operator ? "(" + children + ")" : children;
   }
 
   visitFactor(ctx) {
-    return this.visitChildren(ctx).join("");
+    const exponent = ctx.exponent();
+    const children = this.visitChildren(ctx).join(exponent ? " " : "");
+    return exponent ? "(" + children + ")" : children;
   }
 
   visitTerminal(ctx) {
