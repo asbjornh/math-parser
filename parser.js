@@ -16,16 +16,12 @@ module.exports = input => {
 
   const tokens = new antlr4.CommonTokenStream(lexer);
 
-  try {
-    const parser = new Parser(tokens);
+  const parser = new Parser(tokens);
 
-    parser.removeErrorListeners();
-    parser.addErrorListener(new ErrorHandler());
+  parser.removeErrorListeners();
+  parser.addErrorListener(new ErrorHandler());
 
-    const tree = parser.start();
+  const tree = parser.start();
 
-    return tree;
-  } catch (error) {
-    throw error;
-  }
+  return tree;
 };
