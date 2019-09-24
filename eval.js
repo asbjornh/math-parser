@@ -1,5 +1,5 @@
 const MathVisitor = require("./lib/mathVisitor").mathVisitor;
-const parse = require("./parser");
+const parse = require("./parse");
 
 class Visitor extends MathVisitor {
   constructor() {
