@@ -1,10 +1,9 @@
 grammar math;
-start: expr | EOF;
+start: expr | '()' | EOF;
 expr: term | expr (add | subtract) term;
-term: number | term (multiply | divide) number;
-number: innerNumber | innerNumber exponent innerNumber;
-
-innerNumber: INT | FLOAT;
+term: factor | term (multiply | divide) factor;
+factor: number | number exponent factor;
+number: INT | FLOAT | '(' expr ')';
 
 exponent: '^';
 add: '+';

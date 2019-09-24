@@ -7,9 +7,11 @@
     "test": "node eval.test.js"
   },
   "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "antlr4": "^4.7.2",
+  "license": "MIT",
+  "devDependencies": {
     "chalk": "^2.4.2"
+  },
+  "dependencies": {
+    "antlr4": "^4.7.2"
   }
 }

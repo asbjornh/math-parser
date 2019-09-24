@@ -17,21 +17,50 @@ class Visitor extends MathVisitor {
     return ctx.expr() ? this.visit(ctx.expr()) : 0;
   }
 
-  visitExponent() {
-    return (a, b) => Math.pow(a, b);
+  visitExpr(ctx) {
+    const operator = ctx.add() || ctx.subtract();
+    const o = ctx.add() ? "+" : "-";
+
+    if (!operator) return this.visit(ctx.term());
+
+    const func = this.visit(operator);
+    const l = this.visit(ctx.expr());
+    const r = this.visit(ctx.term());
+    const val = func(l, r);
+    return this.trace(`EXPR ${l} ${o} ${r} ->`, val);
   }
 
-  visitInnerNumber(ctx) {
-    return parseFloat(ctx.getText());
+  visitTerm(ctx) {
+    const operator = ctx.multiply() || ctx.divide();
+    const o = ctx.multiply() ? "*" : "/";
+
+    if (!operator) return this.visit(ctx.factor());
+
+    const func = this.visit(operator);
+    const l = this.visit(ctx.term());
+    const r = this.visit(ctx.factor());
+    const val = func(l, r);
+    return this.trace(`TERM ${l} ${o} ${r} ->`, val);
   }
 
-  visitNumber(ctx) {
-    const [l, r] = this.visit(ctx.innerNumber());
+  visitFactor(ctx) {
     const exponent = ctx.exponent();
+    const l = this.visit(ctx.number());
 
     if (!exponent) return l;
 
-    return this.trace(`NUM ${l} ^ ${r} ->`, this.visit(exponent)(l, r));
+    const r = this.visit(ctx.factor());
+    return exponent
+      ? this.trace(`NUM ${l} ^ ${r} ->`, this.visit(exponent)(l, r))
+      : l;
+  }
+
+  visitNumber(ctx) {
+    return ctx.expr() ? this.visit(ctx.expr()) : parseFloat(ctx.getText());
+  }
+
+  visitExponent() {
+    return (a, b) => Math.pow(a, b);
   }
 
   visitAdd() {
@@ -49,36 +78,8 @@ class Visitor extends MathVisitor {
   visitDivide() {
     return (a, b) => a / b;
   }
-
-  visitTerm(ctx) {
-    const operator = ctx.multiply() || ctx.divide();
-    const o = ctx.multiply() ? "*" : "/";
-
-    if (!operator) return this.visit(ctx.number());
-
-    const func = this.visit(operator);
-    const l = this.visit(ctx.term());
-    const r = this.visit(ctx.number());
-    const val = func(l, r);
-    return this.trace(`TERM ${l} ${o} ${r} ->`, val);
-  }
-
-  visitExpr(ctx) {
-    const operator = ctx.add() || ctx.subtract();
-    const o = ctx.add() ? "+" : "-";
-
-    if (!operator) return this.visit(ctx.term());
-
-    const func = this.visit(operator);
-    const l = this.visit(ctx.expr());
-    const r = this.visit(ctx.term());
-    const val = func(l, r);
-    return this.trace(`EXPR ${l} ${o} ${r} ->`, val);
-  }
 }
 
 module.exports = (input, shouldLog) => {
-  const tree = parse(input, shouldLog);
-
-  return new Visitor().start(tree, shouldLog);
+  return new Visitor().start(parse(input), shouldLog);
 };

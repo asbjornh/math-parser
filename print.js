@@ -3,11 +3,21 @@ const parse = require("./parser");
 
 class Visitor extends MathVisitor {
   start(ctx) {
-    return ctx.expr()
-      ? this.visit(ctx.expr())
-      : ctx.presedenceExpr()
-      ? this.visit(ctx.presedenceExpr())
-      : "";
+    return ctx.expr() ? this.visit(ctx.expr()) : "";
+  }
+
+  visitExpr(ctx) {
+    const children = this.visitChildren(ctx).join(" ");
+    return ctx.add() || ctx.subtract() ? "(" + children + ")" : children;
+  }
+
+  visitTerm(ctx) {
+    const children = this.visitChildren(ctx).join(" ");
+    return ctx.divide() || ctx.multiply() ? "(" + children + ")" : children;
+  }
+
+  visitFactor(ctx) {
+    return this.visitChildren(ctx).join("");
   }
 
   visitTerminal(ctx) {
@@ -16,20 +26,6 @@ class Visitor extends MathVisitor {
 
   visitNumber(ctx) {
     return ctx.getText();
-  }
-
-  visitOperator(ctx) {
-    return ctx.getText();
-  }
-
-  visitTerm(ctx) {
-    const children = this.visitChildren(ctx).join(" ");
-    return ctx.divide() || ctx.multiply() ? "(" + children + ")" : children;
-  }
-
-  visitExpr(ctx) {
-    const children = this.visitChildren(ctx).join(" ");
-    return ctx.add() || ctx.subtract() ? "(" + children + ")" : children;
   }
 }
 
